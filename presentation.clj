@@ -68,6 +68,12 @@ quoted
 ;; <=
 
 ;; **
+;;; ### Notes
+;;; * Quote is recursive.
+;;; * Anything can be quoted.
+;; **
+
+;; **
 ;;; ## Syntax Quote
 ;; **
 
@@ -94,6 +100,13 @@ squoted
 ;; <=
 
 ;; **
+;;; ### Notes
+;;; * Syntax quote is recursive.
+;;; * Anything can be syntax quoted.
+;;; * Symbols are prefixed with their fully qualified namespace.
+;; **
+
+;; **
 ;;; ### Unquote
 ;; **
 
@@ -117,6 +130,10 @@ squoted
 ;; =>
 ;;; {"type":"list-like","open":"<span class='clj-list'>(</span>","close":"<span class='clj-list'>)</span>","separator":" ","items":[{"type":"html","content":"<span class='clj-symbol'>clojure.core/inc</span>","value":"clojure.core/inc"},{"type":"html","content":"<span class='clj-long'>3</span>","value":"3"}],"value":"(clojure.core/inc 3)"}
 ;; <=
+
+;; @@
+~x
+;; @@
 
 ;; **
 ;;; ### Unquote splicing
@@ -171,6 +188,10 @@ squoted
 ;;; {"type":"list-like","open":"<span class='clj-vector'>[</span>","close":"<span class='clj-vector'>]</span>","separator":" ","items":[{"type":"html","content":"<span class='clj-long'>0</span>","value":"0"},{"type":"html","content":"<span class='clj-long'>1</span>","value":"1"},{"type":"html","content":"<span class='clj-long'>2</span>","value":"2"},{"type":"html","content":"<span class='clj-long'>3</span>","value":"3"},{"type":"html","content":"<span class='clj-long'>4</span>","value":"4"}],"value":"[0 1 2 3 4]"}
 ;; <=
 
+;; @@
+~@[1 2]
+;; @@
+
 ;; **
 ;;; ### Hygiene and gensyms
 ;; **
@@ -202,18 +223,19 @@ squoted
 ;; <=
 
 ;; @@
-(defmacro good-hygiene []
-  `(let [n# 3] n#))
+(defmacro good-hygiene [num]
+  `(let [n# 3] (+ n# ~num)))
 ;; @@
 ;; =>
 ;;; {"type":"html","content":"<span class='clj-var'>#&#x27;fuscia-thorns/good-hygiene</span>","value":"#'fuscia-thorns/good-hygiene"}
 ;; <=
 
 ;; @@
-(good-hygiene)
+(let [n 2]
+  (good-hygiene n))
 ;; @@
 ;; =>
-;;; {"type":"html","content":"<span class='clj-long'>3</span>","value":"3"}
+;;; {"type":"html","content":"<span class='clj-long'>5</span>","value":"5"}
 ;; <=
 
 ;; @@
@@ -248,6 +270,8 @@ squoted
 
 ;; **
 ;;; ## Macros
+;;; * Macros are functions that run at macro-expansion time and are passed quoted forms.
+;;; * Unlike functions, macros are not values, and cannot be passed around.
 ;; **
 
 ;; @@
@@ -262,7 +286,7 @@ squoted
 (and-not 'false '(< 1 0))
 ;; @@
 ;; =>
-;;; {"type":"html","content":"<span class='clj-unkown'>false</span>","value":"false"}
+;;; {"type":"list-like","open":"<span class='clj-list'>(</span>","close":"<span class='clj-list'>)</span>","separator":" ","items":[{"type":"html","content":"<span class='clj-symbol'>clojure.core/and</span>","value":"clojure.core/and"},{"type":"list-like","open":"<span class='clj-list'>(</span>","close":"<span class='clj-list'>)</span>","separator":" ","items":[{"type":"html","content":"<span class='clj-symbol'>clojure.core/not</span>","value":"clojure.core/not"},{"type":"html","content":"<span class='clj-unkown'>false</span>","value":"false"}],"value":"(clojure.core/not false)"},{"type":"list-like","open":"<span class='clj-list'>(</span>","close":"<span class='clj-list'>)</span>","separator":" ","items":[{"type":"html","content":"<span class='clj-symbol'>clojure.core/not</span>","value":"clojure.core/not"},{"type":"list-like","open":"<span class='clj-list'>(</span>","close":"<span class='clj-list'>)</span>","separator":" ","items":[{"type":"html","content":"<span class='clj-symbol'>&lt;</span>","value":"<"},{"type":"html","content":"<span class='clj-long'>1</span>","value":"1"},{"type":"html","content":"<span class='clj-long'>0</span>","value":"0"}],"value":"(< 1 0)"}],"value":"(clojure.core/not (< 1 0))"}],"value":"(clojure.core/and (clojure.core/not false) (clojure.core/not (< 1 0)))"}
 ;; <=
 
 ;; @@
@@ -295,7 +319,11 @@ squoted
 ;; <=
 
 ;; **
-;;; ## Tricks
+;;; ## Tips & Tricks
+;; **
+
+;; **
+;;; Do the bulk of your macro work in a separate function.
 ;; **
 
 ;; @@

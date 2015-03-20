@@ -2,6 +2,8 @@
 
 ;; **
 ;;; # Understanding Quoting and Macros
+;;;
+;;; 2015 RoomKey Spring Technical Conference
 ;; **
 
 ;; @@
@@ -47,7 +49,7 @@
 ;;;  clojure.lang.PersistentList
 ;;;  clojure.lang.PersistentArrayMap
 ;;;  clojure.lang.PersistentHashSet)
-;;; 
+;;;
 ;; <-
 ;; =>
 ;;; {"type":"html","content":"<span class='clj-nil'>nil</span>","value":"nil"}

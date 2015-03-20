@@ -7,17 +7,16 @@
    "S = Format (Markdown | Code)*
     LineEnd = '\n'
     ContentPrefix = ';;; '
-    EmptyContent = ';;; '
     Content = #'.+'
     FormatNumber = #'[0-9]+'
     Format = ';; gorilla-repl.fileformat = ' FormatNumber LineEnd+
     MarkdownStart = ';; **' LineEnd
     MarkdownEnd = ';; **' LineEnd+
-    MarkdownContent = ((ContentPrefix Content LineEnd) | (EmptyContent LineEnd))+
+    MarkdownContent = ((ContentPrefix Content LineEnd) | (ContentPrefix LineEnd))+
     Markdown = MarkdownStart MarkdownContent MarkdownEnd
     ConsoleStart = ';; ->' LineEnd
     ConsoleEnd = ';; <-' LineEnd+
-    ConsoleContent = ((ContentPrefix Content LineEnd) | (EmptyContent LineEnd))+
+    ConsoleContent = ((ContentPrefix Content LineEnd) | (ContentPrefix LineEnd))+
     Console = ConsoleStart ConsoleContent ConsoleEnd
     OutputStart = ';; =>' LineEnd
     OutputEnd = ';; <=' LineEnd+

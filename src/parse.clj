@@ -7,7 +7,7 @@
    "S = Format (Markdown | Code)*
     LineEnd = '\n'
     ContentPrefix = ';;; '
-    EmptyContent = ';;;'
+    EmptyContent = ';;; '
     Content = #'.+'
     FormatNumber = #'[0-9]+'
     Format = ';; gorilla-repl.fileformat = ' FormatNumber LineEnd+
@@ -35,15 +35,17 @@
   (postwalk (fn [node]
               (if (vector? node)
                 (let [[tag] node]
-                  (if (#{:Output :Console} tag)
-                    [:LineEnd "\n"]
+                  (when-not (#{:Output :Console} tag)
                     node))
                 node))
             tree))
 
-(defn output-file [file tree]
+(defn save-file [file tree]
   (->> tree
        flatten
        (remove keyword?)
        (apply str)
        (spit file)))
+
+(defn clear-output [file]
+  (->> file parse-file remove-output (save-file file)))

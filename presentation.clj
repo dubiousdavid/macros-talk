@@ -25,6 +25,10 @@
 ;; @@
 
 ;; @@
+(type quoted)
+;; @@
+
+;; @@
 (pprint (map type quoted))
 ;; @@
 
@@ -32,13 +36,10 @@
 quoted
 ;; @@
 
-;; @@
-(type quoted)
-;; @@
-
 ;; **
 ;;; ### Notes
 ;;; * Quote is recursive.
+;;; * Symbols and lists are treated specially.
 ;;; * Anything can be quoted.
 ;; **
 
@@ -52,16 +53,17 @@ quoted
 ;; @@
 
 ;; @@
-squoted
+(type squoted)
 ;; @@
 
 ;; @@
-(type squoted)
+squoted
 ;; @@
 
 ;; **
 ;;; ### Notes
 ;;; * Syntax quote is recursive.
+;;; * Symbols and lists are treated specially.
 ;;; * Anything can be syntax quoted.
 ;;; * Symbols are prefixed with their fully qualified namespace.
 ;; **
@@ -80,6 +82,10 @@ squoted
 
 ;; @@
 `(inc ~x)
+;; @@
+
+;; @@
+`(inc ~(+ 2 3))
 ;; @@
 
 ;; @@
@@ -154,6 +160,14 @@ squoted
 ;; @@
 
 ;; @@
+(macroexpand-1 '(good-hygiene n))
+;; @@
+
+;; @@
+'(clojure.core/let [n 3] (clojure.core/+ n n))
+;; @@
+
+;; @@
 (gensym)
 ;; @@
 
@@ -183,6 +197,10 @@ squoted
 ;; @@
 
 ;; @@
+(meta (var and-not))
+;; @@
+
+;; @@
 (and-not 'false '(< 1 0))
 ;; @@
 
@@ -208,7 +226,8 @@ squoted
 ;; **
 
 ;; **
-;;; Do the bulk of your macro work in a separate function.
+;;; * Do the bulk of your macro work in a separate function.
+;;; * Macros should be pure, though you can run arbitrary code at macro-expansion time.
 ;; **
 
 ;; @@
@@ -216,9 +235,15 @@ squoted
 ;; @@
 
 ;; @@
-`(require '[clojure.string :as ~string])
+`(require '[clojure.string :as ~'string])
 ;; @@
 
 ;; @@
-`(require '[clojure.string :as ~'string])
+(let [x '[clojure.string :as string]]
+  `(require ~x))
+;; @@
+
+;; @@
+(let [x '[clojure.string :as string]]
+  `(require '~x))
 ;; @@

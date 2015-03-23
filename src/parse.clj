@@ -30,20 +30,36 @@
 (defn parse-file [file]
   (gorilla (slurp file)))
 
-(defn remove-output [tree]
+(defn remove-tags [tags tree]
   (postwalk (fn [node]
               (if (vector? node)
                 (let [[tag] node]
-                  (when-not (#{:Output :Console} tag)
+                  (when-not (tags tag)
                     node))
                 node))
             tree))
 
-(defn save-file [file tree]
+(defn filter-tags [tags tree]
+  (postwalk (fn [node]
+              (if (vector? node)
+                (let [[tag] node]
+                  (when (tags tag)
+                    node))
+                node))
+            tree))
+
+(defn remove-output [tree]
+  (remove-tags #{:Output :Console} tree))
+
+(defn stringify-tree [tree]
   (->> tree
        flatten
        (remove keyword?)
-       (apply str)
+       (apply str)))
+
+(defn save-file [file tree]
+  (->> tree
+       stringify-tree
        (spit file)))
 
 (defn clear-output [file]

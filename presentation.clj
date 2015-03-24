@@ -226,8 +226,12 @@ squoted
 ;; **
 
 ;; **
-;;; * Do the bulk of your macro work in a separate function.
+;;; * Do the bulk of your macro work in a separate function (see rk.annotate.fns).
 ;;; * Macros should be pure, though you can run arbitrary code at macro-expansion time.
+;; **
+
+;; **
+;;; ### Bypassing Hygiene
 ;; **
 
 ;; @@
@@ -247,3 +251,27 @@ squoted
 (let [x '[clojure.string :as string]]
   `(require '~x))
 ;; @@
+
+;; @@
+`(require 'my.namespace)
+;; @@
+
+;; @@
+`(require 'my-namespace)
+;; @@
+
+;; @@
+`(require '~'my-namespace)
+;; @@
+
+;; **
+;;; ## Next Steps
+;; **
+
+;; **
+;;; * Download this talk (https://github.com/dubiousdavid/macros-talk).
+;;; * Play around with the examples.
+;;; * Understand the `and-not` macro.
+;;; * Understand the macros in rk-annotate.
+;;; * Resist the temptation to look at the core.async macros (e.g., go blocks) :)
+;; **
